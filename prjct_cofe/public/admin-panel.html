@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Админ-Панель - Кофейня</title>
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --accent: #c6a664;
+            --accent-hover: #e0c990;
+            --border: #333333;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .logout-btn {
+            padding: 8px 16px;
+            background-color: #c6a664;
+            color: #121212;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .logout-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        .admin-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        .form-section, .menu-list-section {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        h2 {
+            color: var(--accent);
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background-color: #2c2c2c;
+            color: var(--text-main);
+        }
+        .btn-submit {
+            padding: 12px 20px;
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-submit:hover {
+            background-color: var(--accent-hover);
+        }
+        .menu-item {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .menu-item h4 {
+            margin: 0 0 5px 0;
+            color: var(--accent);
+        }
+        .menu-item .price {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        .menu-actions {
+            margin-top: 10px;
+        }
+        .btn-edit, .btn-delete {
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn-edit {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-edit:hover { background-color: #45a049; }
+        .btn-delete:hover { background-color: #da190b; }
+        .edit-form {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border-radius: 4px;
+        }
+        .edit-form .form-group {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Admin Panel & Co.</div>
+            <span>Привет, <span id="welcome-username"></span>!</span>
+            <button class="logout-btn" onclick="logout()">Выйти</button>
+        </header>
+
+        <div class="admin-content">
+            <section class="form-section">
+                <h2>Добавить новую позицию</h2>
+                <form id="addItemForm">
+                    <div class="form-group">
+                        <label for="itemName">Название:</label>
+                        <input type="text" id="itemName" name="itemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemDescription">Описание:</label>
+                        <textarea id="itemDescription" name="itemDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemPrice">Цена:</label>
+                        <input type="number" id="itemPrice" name="itemPrice" step="0.01" min="0" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Добавить в Меню</button>
+                </form>
+            </section>
+
+            <section class="menu-list-section">
+                <h2>Текущее Меню</h2>
+                <div id="menuList">
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000/api'; 
+
+        async function apiCall(endpoint, options = {}) {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            };
+
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                ...options,
+                headers: { ...headers, ...options.headers }
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUsername');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            return response;
+        }
+
+        async function fetchMenuItemsFromAPI() {
+            try {
+                const response = await apiCall('/menu');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Ошибка при загрузке меню с сервера:", error);
+                alert("Не удалось загрузить меню. Проверьте консоль.");
+                return [];
+            }
+        }
+
+        async function addMenuItemToAPI(itemData) {
+            try {
+                const response = await apiCall('/menu', {
+                    method: 'POST',
+                    body: JSON.stringify(itemData)
+                });
+                if (!response.ok) {
+                     const errorData = await response.json();
+                     throw new Error(errorData.error || 'Ошибка при добавлении');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Ошибка при добавлении позиции:", error);
+                alert(`Не удалось добавить позицию: ${error.message}`);
+            }
+        }
+
+        async function updateMenuItemOnAPI(id, itemData) {
+            try {
+                const response = await apiCall(`/menu/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(itemData)
+                });
+                if (!response.ok) {
+                     const errorData = await response.json();
+                     throw new Error(errorData.error || 'Ошибка при обновлении');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Ошибка при обновлении позиции:", error);
+                alert(`Не удалось обновить позицию: ${error.message}`);
+            }
+        }
+
+        async function deleteMenuItemFromAPI(id) {
+            try {
+                const response = await apiCall(`/menu/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                     const errorData = await response.json();
+                     throw new Error(errorData.error || 'Ошибка при удалении');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Ошибка при удалении позиции:", error);
+                alert(`Не удалось удалить позицию: ${error.message}`);
+            }
+        }
+
+        if (!localStorage.getItem('adminToken')) {
+            window.location.href = 'admin_login.html';
+        }
+
+        document.getElementById('welcome-username').textContent = localStorage.getItem('adminUsername') || 'Администратор';
+
+        let menuItems = [];
+
+        async function loadMenuItems() {
+            menuItems = await fetchMenuItemsFromAPI();
+            renderMenuList();
+        }
+
+        function renderMenuList() {
+            const listElement = document.getElementById('menuList');
+            listElement.innerHTML = '';
+
+            menuItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'menu-item';
+                itemDiv.dataset.id = item.id;
+
+                itemDiv.innerHTML = `
+                    <h4>${item.name}</h4>
+            
+                    <div class="price">${item.price} руб.</div>
+                    <div class="menu-actions">
+                        <button class="btn-edit" onclick="startEditing(${item.id})">Редактировать</button>
+                        <button class="btn-delete" onclick="deleteItem(${item.id})">Удалить</button>
+                    </div>
+                    <div id="edit-form-${item.id}" class="edit-form" style="display:none;">
+                        <div class="form-group">
+                            <label>Название:</label>
+                            <input type="text" id="edit-name-${item.id}" value="${item.name}">
+                        </div>
+                        <div class="form-group">
+                            <label>Описание:</label>
+                            <textarea id="edit-desc-${item.id}" rows="2">${item.description || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Цена:</label>
+                            <input type="number" id="edit-price-${item.id}" value="${item.price}" step="0.01" min="0">
+                        </div>
+                        <button class="btn-submit" onclick="saveEdit(${item.id})">Сохранить</button>
+                        <button onclick="cancelEdit(${item.id})">Отмена</button>
+                    </div>
+                `;
+                listElement.appendChild(itemDiv);
+            });
+        }
+
+        document.getElementById('addItemForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('itemName').value.trim();
+            const desc = document.getElementById('itemDescription').value.trim();
+            const price = parseFloat(document.getElementById('itemPrice').value);
+
+            if (!name || isNaN(price) || price <= 0) {
+                alert('Пожалуйста, заполните все поля корректно.');
+                return;
+            }
+
+            const newItemData = { name, description: desc, price };
+            const newItem = await addMenuItemToAPI(newItemData);
+
+            if (newItem) {
+                menuItems.push(newItem);
+                renderMenuList();
+                this.reset();
+            }
+        });
+
+        function startEditing(id) {
+            menuItems.forEach(item => {
+                if (item.id === id) {
+                    document.querySelector(`#edit-form-${id}`).style.display = 'block';
+                } else {
+                    document.querySelector(`#edit-form-${item.id}`).style.display = 'none';
+                }
+            });
+        }
+
+        async function saveEdit(id) {
+            const newName = document.getElementById(`edit-name-${id}`).value.trim();
+            const newDesc = document.getElementById(`edit-desc-${id}`).value.trim();
+            const newPrice = parseFloat(document.getElementById(`edit-price-${id}`).value);
+
+            if (!newName || isNaN(newPrice) || newPrice <= 0) {
+                alert('Пожалуйста, заполните все поля корректно.');
+                return;
+            }
+
+            const updatedItemData = { name: newName, description: newDesc, price: newPrice };
+            const updatedItem = await updateMenuItemOnAPI(id, updatedItemData);
+
+            if (updatedItem) {
+                const index = menuItems.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    menuItems[index] = updatedItem;
+                }
+                renderMenuList();
+            }
+        }
+
+        function cancelEdit(id) {
+            document.querySelector(`#edit-form-${id}`).style.display = 'none';
+        }
+
+        async function deleteItem(id) {
+            if (confirm('Вы уверены, что хотите удалить эту позицию?')) {
+                const result = await deleteMenuItemFromAPI(id);
+
+                if (result) {
+                    menuItems = menuItems.filter(item => item.id !== id);
+                    renderMenuList();
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUsername');
+            window.location.href = 'admin-login.html';
+        }
+
+        loadMenuItems();
+    </script>
+</body>
+</html>
