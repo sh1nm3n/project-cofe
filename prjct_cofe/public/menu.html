@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="dark-bg">
     <header>
@@ -17,14 +17,28 @@
                 <li><a href="index.html">Главная</a></li>
                 <li><a href="menu.html" class="active">Меню</a></li>
                 <li><a href="contact.html">Контакты</a></li>
+                <li><span id="userStatus" style="margin-left: 1rem; color: var(--accent); font-weight: 600;"></span></li>
+                <li><a href="auth.html" id="authLink">Войти</a></li>
             </ul>
         </nav>
     </header>
 
     <main class="container page-content">
         <div class="text-center-block">
-            <span class="subtitle">Карта вкусов</span>
-            <h2 class="section-title">Классика и Авторские напитки</h2>
+            <span class="subtitle">Наши предложения</span>
+            <h2 class="section-title">Карта вкусов</h2>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 40px;">
+                <button class="btn-premium category-filter active" data-category="all">Все</button>
+                <button class="btn-premium category-filter" data-category="Классика и Авторские напитки">Классика</button>
+                <button class="btn-premium category-filter" data-category="Десерты">Десерты</button>
+                <button class="btn-premium category-filter" data-category="Холодные напитки">Холодные</button>
+                <button class="btn-premium category-filter" data-category="Чай и Альтернатива">Чай</button>
+        </div>
+
+        <div id="menuContainer" class="menu-premium-grid">
+                <p style="text-align: center; color: var(--text-muted);">Загрузка меню...</p>
         </div>
         
         <div class="menu-premium-grid">
@@ -63,6 +77,119 @@
         </div>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let allMenuItems = [];
+
+        // === ЗАГРУЗКА МЕНЮ ===
+        async function loadMenu() {
+            try {
+                const response = await fetch(`${API_URL}/menu`);
+                allMenuItems = await response.json();
+                
+                renderMenu(allMenuItems);
+            } catch (error) {
+                console.error('Ошибка загрузки меню:', error);
+                document.getElementById('menuContainer').innerHTML = 
+                    '<p style="text-align: center; color: #ff6b6b;">Ошибка загрузки меню</p>';
+            }
+        }
+
+        // === ОТРИСОВКА МЕНЮ ===
+        function renderMenu(items) {
+            const container = document.getElementById('menuContainer');
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Меню пустое</p>';
+                return;
+            }
+
+            // Группировка по категориям
+            const categories = {};
+            items.forEach(item => {
+                const cat = item.category || 'Другое';
+                if (!categories[cat]) {
+                    categories[cat] = [];
+                }
+                categories[cat].push(item);
+            });
+
+            let html = '';
+            for (const [category, categoryItems] of Object.entries(categories)) {
+                html += `
+                    <div class="menu-category" style="grid-column: 1 / -1; margin: 40px 0 20px;">
+                        <h3 style="color: var(--accent); font-family: var(--font-heading); font-size: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                            ${category}
+                        </h3>
+                    </div>
+                `;
+                
+                categoryItems.forEach(item => {
+                    html += `
+                        <div class="menu-card" data-category="${item.category || 'Другое'}">
+                            <div class="menu-card-header">
+                                <h3>${item.name}</h3>
+                                <span class="dots"></span>
+                                <span class="price">${item.price} ₽</span>
+                            </div>
+                            <p>${item.description || ''}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = html;
+        }
+
+        // === ФИЛЬТР ПО КАТЕГОРИЯМ ===
+        function filterMenu(category) {
+            if (category === 'all') {
+                renderMenu(allMenuItems);
+            } else {
+                const filtered = allMenuItems.filter(item => item.category === category);
+                renderMenu(filtered);
+            }
+        }
+
+        // === ОБРАБОТЧИКИ ФИЛЬТРОВ ===
+        document.querySelectorAll('.category-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterMenu(btn.dataset.category);
+            });
+        });
+
+        // === СТАТУС ПОЛЬЗОВАТЕЛЯ ===
+        function checkUserStatus() {
+            const user = JSON.parse(localStorage.getItem('user-data') || 'null');
+            const token = localStorage.getItem('user-token');
+            
+            const userStatus = document.getElementById('userStatus');
+            const authLink = document.getElementById('authLink');
+            
+            if (user && token) {
+                userStatus.textContent = `👤 ${user.username}`;
+                authLink.textContent = 'Выйти';
+                authLink.onclick = (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('user-token');
+                    localStorage.removeItem('user-data');
+                    location.reload();
+                };
+            } else {
+                userStatus.textContent = '';
+                authLink.textContent = 'Войти';
+                authLink.href = 'auth.html';
+                authLink.onclick = null;
+            }
+        }
+
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            checkUserStatus();
+        });
+    </script>
 </body>
 </html>

@@ -103,6 +103,14 @@
                 } else {
                     document.getElementById('login-error').textContent = data.error || 'Ошибка входа.';
                 }
+
+                // 🔑 СОХРАНЯЕМ ТОКЕН!
+                localStorage.setItem('adminToken', data.token);
+                localStorage.setItem('adminUsername', data.username);
+                
+                console.log('✅ Вход успешен. Токен:', data.token.substring(0, 20) + '...');
+                
+                window.location.href = 'admin-panel.html';
             } catch (error) {
                 console.error("Ошибка запроса:", error);
                 document.getElementById('login-error').textContent = 'Ошибка соединения с сервером.';
