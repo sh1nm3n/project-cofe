@@ -156,7 +156,7 @@
                     </div>
                     <div class="form-group">
                         <label for="itemCategory">Категория *</label>
-                        <select id="itemCategory" required>
+                        <select id="itemCategory" name="category" required>
                             <option value="Классика и Авторские напитки">Классика и Авторские напитки</option>
                             <option value="Десерты">Десерты</option>
                             <option value="Холодные напитки">Холодные напитки</option>
@@ -328,26 +328,35 @@
             });
         }
 
-        document.getElementById('addItemForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const name = document.getElementById('itemName').value.trim();
-            const desc = document.getElementById('itemDescription').value.trim();
-            const price = parseFloat(document.getElementById('itemPrice').value);
-
-            if (!name || isNaN(price) || price <= 0) {
-                alert('Пожалуйста, заполните все поля корректно.');
-                return;
-            }
-
-            const newItemData = { name, description: desc, price };
-            const newItem = await addMenuItemToAPI(newItemData);
-
-            if (newItem) {
-                menuItems.push(newItem);
-                renderMenuList();
-                this.reset();
-            }
+        // === ОБРАБОТКА ФОРМЫ ===
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('addItemForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // 🔧 Получаем категорию ПРЯМО ИЗ ФОРМЫ
+                const categorySelect = document.getElementById('itemCategory');
+                console.log('📋 Select найден:', categorySelect !== null);
+                console.log('📋 Категория:', categorySelect?.value);
+                
+                const itemData = {
+                    name: document.getElementById('itemName').value,
+                    category: categorySelect ? categorySelect.value : 'Классика и Авторские напитки',
+                    price: parseFloat(document.getElementById('itemPrice').value),
+                    description: document.getElementById('itemDescription').value
+                };
+                
+                console.log('📦 Отправка данных:', itemData);
+                
+                try {
+                    await addMenuItemToAPI(itemData);
+                    showAlert('✅ Товар успешно добавлен!', 'success');
+                    document.getElementById('addItemForm').reset();
+                    loadMenu();
+                } catch (error) {
+                    console.error('Ошибка добавления:', error);
+                    showAlert('❌ ' + error.message, 'error');
+                }
+            });
         });
 
         function startEditing(id) {

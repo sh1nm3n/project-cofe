@@ -454,10 +454,7 @@ async function startServer() {
     }
     
     app.listen(PORT, () => {
-        console.log(`\n🚀 Сервер запущен на http://localhost:${PORT}`);
-        console.log(`   Админ-панель: http://localhost:${PORT}/admin-login.html`);
-        console.log(`   Меню: http://localhost:${PORT}/menu.html`);
-        console.log(`\n💡 Для Live Server используйте: http://127.0.0.1:5500/prjct_cofe/public/admin-login.html\n`);
+        console.log(`\nСервер запущен на http://localhost:${PORT}`);
     });
 }
 
