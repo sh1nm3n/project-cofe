@@ -17,37 +17,67 @@
                 <li><a href="index.html">Главная</a></li>
                 <li><a href="menu.html">Меню</a></li>
                 <li><a href="contact.html" class="active">Контакты</a></li>
+                <li><span id="userStatus" style="margin-left: 1rem; color: var(--accent); font-weight: 600;"></span></li>
+                <li><a href="auth.html" id="authLink">Войти</a></li>
             </ul>
         </nav>
     </header>
 
-    <main class="container page-content">
-        <div class="contact-wrap">
-            <div class="contact-info-block">
-                <span class="subtitle">Ждем вас</span>
-                <h2 class="section-title">Пространство B&B</h2>
-                <div class="info-details">
-                    <p>ул. Кофейная панорама, 12, Центр</p>
-                    <p>Ежедневно: 08:00 — 23:00</p>
-                    <p class="phone">+7 (999) B&B-COFFEE</p>
+    <section class="page-content">
+        <div class="container">
+            <div class="text-center-block">
+                <span class="subtitle">Свяжитесь с нами</span>
+                <h2 class="section-title">Ждем вас</h2>
+            </div>
+
+    <div class="contact-wrap">
+                <!-- Контактная информация -->
+                <div class="contact-info">
+                    <h3 style="font-family: var(--font-heading); font-size: 2rem; color: #fff; margin-bottom: 30px;">
+                        Пространство B&B
+                    </h3>
+                    
+                    <div class="info-details">
+                        <p>📍 ул. Кофейная панорама, 12, Центр</p>
+                        <p>🕐 Ежедневно: 08:00 — 23:00</p>
+                        <p class="phone">📞 +7 (999) B&B-COFFEE</p>
+                        <p>✉️ hello@beans-brew.com</p>
+                    </div>
                 </div>
-            </div>
-            <div class="contact-form-block">
-                <form id="contactForm" class="premium-form">
-                    <div class="form-group">
-                        <input type="text" id="name" name="name" required placeholder=" ">
-                        <label for="name">Ваше имя</label>
-                    </div>
-                    <div class="form-group">
-                        <textarea id="message" name="message" rows="4" required placeholder=" "></textarea>
-                        <label for="message">Ваш запрос (или бронь столика)</label>
-                    </div>
-                    <button type="submit" class="btn-premium">Отправить</button>
-                </form>
-            </div>
+            <!-- Форма обратной связи -->
+                <div class="contact-form">
+                    <form id="contactForm" class="premium-form">
+                        <div class="form-group">
+                            <input type="text" id="contactName" name="name" placeholder=" " required>
+                            <label for="contactName">Ваше имя *</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="email" id="contactEmail" name="email" placeholder=" " required>
+                            <label for="contactEmail">Ваш Email *</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="tel" id="contactPhone" name="phone" placeholder=" ">
+                            <label for="contactPhone">Телефон</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <textarea id="contactMessage" name="message" placeholder=" " rows="5" required></textarea>
+                            <label for="contactMessage">Ваш запрос (или бронь столика) *</label>
+                        </div>
+                        
+                        <button type="submit" class="btn-premium" id="submitBtn">
+                            Отправить
+                        </button>
+                    </form>
+                    
+                    <!-- Сообщение об успехе/ошибке -->
+                    <div id="formMessage" style="margin-top: 20px; padding: 15px; border-radius: 4px; display: none;"></div>
+                </div>
         </div>
     </main>
 
-    <script src="script.js"></script>
+    <script src="../cofe_backend/js/contact-form.js"></script>
 </body>
 </html>

@@ -229,6 +229,40 @@ app.post('/api/logout', async (req, res) => {
     res.json({ message: 'Выход выполнен' });
 });
 
+// === ОТПРАВКА СООБЩЕНИЯ (контактная форма) ===
+app.post('/api/contact', async (req, res) => {
+    const { name, email, phone, message } = req.body;
+    
+    console.log('📥 Новое сообщение:', { name, email, phone });
+    
+    if (!name || !email || !message) {
+        return res.status(400).json({ error: 'Имя, email и сообщение обязательны' });
+    }
+    
+    if (message.length < 10) {
+        return res.status(400).json({ error: 'Сообщение должно быть не менее 10 символов' });
+    }
+
+    try {
+        const connection = await pool.getConnection();
+        
+        const query = `INSERT INTO contacts (name, email, phone, message, is_read) VALUES (?, ?, ?, ?, FALSE)`;
+        
+        const [result] = await connection.execute(query, [name, email, phone || null, message]);
+        
+        connection.release();
+        
+        console.log('✅ Сообщение сохранено, ID:', result.insertId);
+        
+        res.status(201).json({ message: 'Сообщение успешно отправлено', id: result.insertId });
+        
+    } catch (error) {
+        console.error('❌ Ошибка при сохранении сообщения:', error);
+        res.status(500).json({ error: 'Ошибка сервера при отправке сообщения' });
+    }
+});
+
+
 // === МЕНЮ (публичный доступ) ===
 app.get('/api/menu', async (req, res) => {
     try {

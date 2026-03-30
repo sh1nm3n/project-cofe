@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beans & Brew | Specialty Coffee House</title>
+    <title>Капучинка | Уютная кофейня</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/cofe.css">
 </head>
 <body>
     <header>
         <nav class="container">
-            <a href="index.html" class="logo">B<span>&</span>B</a>
+            <a href="#" class="logo">Капу<span>ч</span>инка</a>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Главная</a></li>
                 <li><a href="menu.html">Меню</a></li>
@@ -22,44 +22,41 @@
             </ul>
         </nav>
     </header>
-
-    <section class="hero-premium">
-        <div class="container hero-split">
-            <div class="hero-content">
-                <span class="subtitle">Искусство обжарки</span>
-                <h1>Кофе,<br> за которым<br> возвращаются</h1>
-                <p>Мы находим редкие лоты specialty кофе и раскрываем их истинный вкус в нашей собственной обжарочной лаборатории.</p>
-                <a href="menu.html" class="btn-premium">Исследовать меню</a>
+    <main>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <span class="subtitle">Тепло и аромат</span>
+                    <h1>Капучинка - <br> где кофе<br> становится уютом</h1>
+                    <p>Домашняя атмосфера, свежая выпечка и кофе, который согревает душу каждое утро.</p>
+                    <a href="#menu" class="btn-primary">Посмотреть меню</a>
+                </div>
+                <div class="hero-image">
+                    <img src="https://pngicon.ru/file/uploads/kofe.png" alt="Ароматный кофе">
+                </div>
             </div>
-        </div>
-    </section>
-
-    <script>
-        function checkUserStatus() {
-            const user = JSON.parse(localStorage.getItem('user-data') || 'null');
-            const token = localStorage.getItem('user-token');
-            
-            const userStatus = document.getElementById('userStatus');
-            const authLink = document.getElementById('authLink');
-            
-            if (user && token) {
-                userStatus.textContent = `👤 ${user.username}`;
-                authLink.textContent = 'Выйти';
-                authLink.onclick = (e) => {
-                    e.preventDefault();
-                    localStorage.removeItem('user-token');
-                    localStorage.removeItem('user-data');
-                    location.reload();
-                };
-            } else {
-                userStatus.textContent = '';
-                authLink.textContent = 'Войти';
-                authLink.href = 'auth.html';
-                authLink.onclick = null;
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', checkUserStatus);
-    </script>
+        </section>
+        <section class="features">
+            <div class="container">
+                <div class="section-header">
+                    <span class="subtitle">Почему мы</span>
+                    <h2 class="section-title">Создаем настроение<br>каждый день</h2>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card"><div class="feature-icon">☕</div><h3>Спешелти кофе</h3><p>Отбираем лучшие зерна с малых ферм мира и обжариваем вручную</p></div>
+                    <div class="feature-card"><div class="feature-icon">🥐</div><h3>Домашняя выпечка</h3><p>Пирожные и десерты только из натуральных ингредиентов</p></div>
+                    <div class="feature-card"><div class="feature-icon">🏠</div><h3>Уютная атмосфера</h3><p>Теплое пространство, где хочется оставаться подольше</p></div>
+                </div>
+            </div>
+        </section>
+        <section class="about">
+            <div class="container about-grid">
+                <div class="about-image"><img src="https://png.klev.club/uploads/posts/2024-03/png-klev-club-p-kofeinie-zerna-png-3.png" alt="Обжарка кофе"></div>
+                <div class="about-content"><span class="subtitle">Наша философия</span><h2>Кофе — это искусство, которым мы делимся</h2><p>Мы верим, что настоящий кофе способен изменить день. Поэтому мы лично отбираем каждое зерно, экспериментируем с обжаркой и создаем напитки, которые запоминаются.</p><p>В "Капучинке" вы всегда найдете уютную атмосферу, вкуснейшую выпечку и кофе, приготовленный с любовью.</p></div>
+            </div>
+        </section>
+    </main>
+    <footer><div class="container"><p>© 2026 Капучинка. Уютная кофейня с душой.</p></div></footer>
+    <script src="../cofe_backend/js/user-status.js"></script>
 </body>
 </html>
