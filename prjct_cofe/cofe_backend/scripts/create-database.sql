@@ -59,11 +59,9 @@ CREATE TABLE contacts (
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     message TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     INDEX idx_email (email),
-    INDEX idx_is_read (is_read),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

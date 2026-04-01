@@ -1,6 +1,29 @@
 const API_URL = 'http://localhost:3000/api';
 
-// === ОТПРАВКА ФОРМЫ ===
+const phoneInput = document.getElementById('contactPhone');
+
+if (phoneInput) {
+    phoneInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/[^\d+]/g, '');
+        
+        if (value.length > 0 && value[0] !== '+') {
+            value = '+' + value;
+        }
+        
+        if (value.length > 12) {
+            value = value.slice(0, 12);
+        }
+        
+        e.target.value = value;
+    });
+
+    phoneInput.addEventListener('blur', (e) => {
+        if (e.target.value === '+') {
+            e.target.value = '';
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -8,11 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // 🔧 Останавливаем стандартную отправку!
+            e.preventDefault(); 
             
             console.log('📤 Начало отправки формы...');
             
-            // Получаем данные из формы
             const formData = {
                 name: document.getElementById('contactName').value.trim(),
                 email: document.getElementById('contactEmail').value.trim(),
@@ -22,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log('📦 Данные формы:', formData);
 
-            // Блокируем кнопку
             submitBtn.disabled = true;
             submitBtn.textContent = 'Отправка...';
             formMessage.style.display = 'none';
@@ -33,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch(`${API_URL}/contact`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'  // 🔧 Обязательно!
+                        'Content-Type': 'application/json' 
                     },
                     body: JSON.stringify(formData)
                 });
@@ -47,13 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(data.error || 'Ошибка отправки');
                 }
 
-                // Успех
                 formMessage.textContent = '✅ ' + data.message;
                 formMessage.style.background = 'rgba(76, 175, 80, 0.2)';
                 formMessage.style.color = '#4caf50';
                 formMessage.style.display = 'block';
 
-                // Очищаем форму
                 contactForm.reset();
 
                 console.log('✅ Сообщение отправлено успешно!');
@@ -61,17 +80,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('❌ Ошибка:', error);
                 
-                // Ошибка
                 formMessage.textContent = '❌ ' + error.message;
                 formMessage.style.background = 'rgba(244, 67, 54, 0.2)';
                 formMessage.style.color = '#f44336';
                 formMessage.style.display = 'block';
             } finally {
-                // Разблокируем кнопку
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Отправить';
 
-                // Скрываем сообщение через 5 секунд
                 setTimeout(() => {
                     formMessage.style.display = 'none';
                 }, 5000);
@@ -79,11 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Проверка статуса пользователя
     checkUserStatus();
 });
 
-// === СТАТУС ПОЛЬЗОВАТЕЛЯ ===
 function checkUserStatus() {
     const user = JSON.parse(localStorage.getItem('user-data') || 'null');
     const token = localStorage.getItem('user-token');

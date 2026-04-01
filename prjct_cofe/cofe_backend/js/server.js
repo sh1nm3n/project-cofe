@@ -16,7 +16,6 @@ app.use(cors({
 }));
 
 
-// === ПУЛ ПОДКЛЮЧЕНИЙ ===
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
@@ -27,7 +26,6 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-// === ПРОВЕРКА ПОДКЛЮЧЕНИЯ ===
 async function testDatabaseConnection() {
     try {
         const connection = await pool.getConnection();
@@ -40,10 +38,8 @@ async function testDatabaseConnection() {
     }
 }
 
-// === ИНИЦИАЛИЗАЦИЯ СЕССИЙ ===
 global.adminSessions = {};
 
-// === АУТЕНТИФИКАЦИЯ ===
 const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -76,7 +72,6 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-// === ВХОД АДМИНА ===
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
     
@@ -133,7 +128,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// === РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ ===
 app.post('/api/register', async (req, res) => {
     const { username, email, password } = req.body; 
     
@@ -181,9 +175,8 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// === РЕГИСТРАЦИЯ (альтернативный URL для совместимости) ===
 app.post('/api/auth/register', async (req, res) => {
-    const { username, email, password } = req.body;  // ← Добавлено email
+    const { username, email, password } = req.body;  
     
     if (!username || !password) {
         return res.status(400).json({ error: 'Имя пользователя и пароль обязательны' });
@@ -211,12 +204,10 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-// === ПРОВЕРКА ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ ===
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
     res.json({ user: req.user, type: 'admin' });
 });
 
-// === ВЫХОД ===
 app.post('/api/logout', async (req, res) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -229,7 +220,6 @@ app.post('/api/logout', async (req, res) => {
     res.json({ message: 'Выход выполнен' });
 });
 
-// === ОТПРАВКА СООБЩЕНИЯ (контактная форма) ===
 app.post('/api/contact', async (req, res) => {
     const { name, email, phone, message } = req.body;
     
@@ -246,7 +236,7 @@ app.post('/api/contact', async (req, res) => {
     try {
         const connection = await pool.getConnection();
         
-        const query = `INSERT INTO contacts (name, email, phone, message, is_read) VALUES (?, ?, ?, ?, FALSE)`;
+        const query = `INSERT INTO contacts (name, email, phone, message) VALUES (?, ?, ?, ?)`;
         
         const [result] = await connection.execute(query, [name, email, phone || null, message]);
         
@@ -263,7 +253,6 @@ app.post('/api/contact', async (req, res) => {
 });
 
 
-// === МЕНЮ (публичный доступ) ===
 app.get('/api/menu', async (req, res) => {
     try {
         const connection = await pool.getConnection();
@@ -277,7 +266,6 @@ app.get('/api/menu', async (req, res) => {
     }
 });
 
-// === ДОБАВИТЬ В МЕНЮ (только админ) ===
 app.post('/api/menu', authenticateToken, async (req, res) => {
     const { name, description, price, category } = req.body;
     
@@ -309,7 +297,6 @@ app.post('/api/menu', authenticateToken, async (req, res) => {
     }
 });
 
-// === ОБНОВИТЬ В МЕНЮ (только админ) ===
 app.put('/api/menu/:id', authenticateToken, async (req, res) => {
     const id = req.params.id;
     const { name, description, price, category } = req.body;
@@ -334,7 +321,6 @@ app.put('/api/menu/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// === УДАЛИТЬ ИЗ МЕНЮ (только админ) ===
 app.delete('/api/menu/:id', authenticateToken, async (req, res) => {
     const id = req.params.id;
     
@@ -354,11 +340,8 @@ app.delete('/api/menu/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// === ДОБАВИТЬ ПОСЛЕ СУЩЕСТВУЮЩИХ МАРШРУТОВ ===
-
-// Маршруты под префиксом /api/auth/ (для совместимости)
 app.post('/api/auth/register', async (req, res) => {
-    const { username, email, password } = req.body;  // ← Добавлено email
+    const { username, email, password } = req.body;  
     
     if (!username || !password) {
         return res.status(400).json({ error: 'Имя пользователя и пароль обязательны' });
@@ -404,7 +387,6 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-// POST /api/auth/login - вход пользователя (не админа)
 app.post('/api/auth/login', async (req, res) => {
     const { username, password } = req.body;
     
@@ -417,7 +399,6 @@ app.post('/api/auth/login', async (req, res) => {
     try {
         const connection = await pool.getConnection();
         
-        // 🔧 Ищем по username ИЛИ email
         const query = 'SELECT * FROM users WHERE username = ? OR email = ?';
         const [rows] = await connection.execute(query, [username, username]);
 
@@ -460,7 +441,6 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// === СТАТИЧЕСКИЕ ФАЙЛЫ ===
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
@@ -479,7 +459,6 @@ app.get('/menu.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'menu.html'));
 });
 
-// === ЗАПУСК СЕРВЕРА ===
 async function startServer() {
     const dbConnected = await testDatabaseConnection();
     

@@ -4,49 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Контакты | Beans & Brew</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cofe.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
-<body class="dark-bg">
+<body>
     <header>
-        <nav class="container">
-            <a href="index.html" class="logo">B<span>&</span>B</a>
-            <ul class="nav-links">
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="menu.html">Меню</a></li>
-                <li><a href="contact.html" class="active">Контакты</a></li>
-                <li><span id="userStatus" style="margin-left: 1rem; color: var(--accent); font-weight: 600;"></span></li>
-                <li><a href="auth.html" id="authLink">Войти</a></li>
-            </ul>
-        </nav>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Капу<span>ч</span>инка</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="menu.html">Меню</a></li>
+                    <li><a href="contact.html" class="active">Контакты</a></li>
+                    <span id="userStatus" style="margin-left: 1rem; color: #8B4513; font-weight: 600;"></span>
+                    <li><a href="auth.html" id="authLink">Войти</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <section class="page-content">
+    <section class="contact">
         <div class="container">
-            <div class="text-center-block">
-                <span class="subtitle">Свяжитесь с нами</span>
-                <h2 class="section-title">Ждем вас</h2>
-            </div>
-
-    <div class="contact-wrap">
-                <!-- Контактная информация -->
+            <div class="contact-grid">
                 <div class="contact-info">
-                    <h3 style="font-family: var(--font-heading); font-size: 2rem; color: #fff; margin-bottom: 30px;">
-                        Пространство B&B
-                    </h3>
+                    <span class="subtitle">Свяжитесь с нами</span>
+                    <h2 class="section-title">Ждем вас</h2>
                     
-                    <div class="info-details">
-                        <p>📍 ул. Кофейная панорама, 12, Центр</p>
-                        <p>🕐 Ежедневно: 08:00 — 23:00</p>
-                        <p class="phone">📞 +7 (999) B&B-COFFEE</p>
-                        <p>✉️ hello@beans-brew.com</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <span class="contact-icon">📍</span>
+                            <p>ул. Кофейная панорама, 12, Центр</p>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🕐</span>
+                            <p>Ежедневно: 08:00 — 23:00</p>
+                        </div>
                     </div>
                 </div>
-            <!-- Форма обратной связи -->
+
                 <div class="contact-form">
-                    <form id="contactForm" class="premium-form">
+                    <form id="contactForm">
                         <div class="form-group">
                             <input type="text" id="contactName" name="name" placeholder=" " required>
                             <label for="contactName">Ваше имя *</label>
@@ -67,17 +64,22 @@
                             <label for="contactMessage">Ваш запрос (или бронь столика) *</label>
                         </div>
                         
-                        <button type="submit" class="btn-premium" id="submitBtn">
-                            Отправить
-                        </button>
+                        <button type="submit" class="btn-primary" id="submitBtn">Отправить</button>
                     </form>
                     
-                    <!-- Сообщение об успехе/ошибке -->
-                    <div id="formMessage" style="margin-top: 20px; padding: 15px; border-radius: 4px; display: none;"></div>
+                    <div id="formMessage" style="margin-top: 20px; padding: 15px; border-radius: 50px; display: none; text-align: center;"></div>
                 </div>
+            </div>
         </div>
-    </main>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Капучинка. Specialty Coffee House</p>
+        </div>
+    </footer>
 
     <script src="../cofe_backend/js/contact-form.js"></script>
+        
 </body>
 </html>

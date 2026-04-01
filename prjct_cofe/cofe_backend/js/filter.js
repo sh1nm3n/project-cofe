@@ -1,7 +1,6 @@
 const API_URL = 'http://localhost:3000/api';
 let allMenuItems = [];
 
-// === ЗАГРУЗКА МЕНЮ ===
 async function loadMenu() {
     try {
         const response = await fetch(`${API_URL}/menu`);
@@ -11,76 +10,62 @@ async function loadMenu() {
     } catch (error) {
         console.error('Ошибка загрузки меню:', error);
         document.getElementById('menuContainer').innerHTML = 
-            '<p style="text-align: center; color: #ff6b6b;">Ошибка загрузки меню</p>';
+            '<p style="text-align: center; color: #ff6b6b; padding: 60px 0;">Ошибка загрузки меню</p>';
     }
 }
 
-// === ОТРИСОВКА МЕНЮ ===
 function renderMenu(items) {
     const container = document.getElementById('menuContainer');
     
     if (items.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Меню пустое</p>';
+        container.innerHTML = '<p style="text-align: center; color: var(--text-soft); padding: 60px 0;">Меню пустое</p>';
         return;
     }
 
-    // Группировка по категориям
-    const categories = {};
-    items.forEach(item => {
-        const cat = item.category || 'Другое';
-        if (!categories[cat]) {
-            categories[cat] = [];
-        }
-        categories[cat].push(item);
-    });
-
     let html = '';
-    for (const [category, categoryItems] of Object.entries(categories)) {
+    items.forEach(item => {
         html += `
-            <div class="menu-category" style="grid-column: 1 / -1; margin: 40px 0 20px;">
-                <h3 style="color: var(--accent); font-family: var(--font-heading); font-size: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                    ${category}
-                </h3>
-            </div>
-        `;
-        
-        categoryItems.forEach(item => {
-            html += `
-                <div class="menu-card" data-category="${item.category || 'Другое'}">
-                    <div class="menu-card-header">
+            <div class="menu-item" data-category="${item.category || 'Другое'}">
+                <div class="menu-item-info">
+                    <div class="menu-item-header">
                         <h3>${item.name}</h3>
-                        <span class="dots"></span>
                         <span class="price">${item.price} ₽</span>
                     </div>
-                    <p>${item.description || ''}</p>
+                    <p class="menu-item-desc">${item.description || ''}</p>
                 </div>
-            `;
-        });
-    }
+            </div>
+        `;
+    });
 
     container.innerHTML = html;
 }
 
-// === ФИЛЬТР ПО КАТЕГОРИЯМ ===
 function filterMenu(category) {
-    if (category === 'all') {
-        renderMenu(allMenuItems);
-    } else {
-        const filtered = allMenuItems.filter(item => item.category === category);
-        renderMenu(filtered);
-    }
+    const items = document.querySelectorAll('.menu-item');
+    
+    items.forEach(item => {
+        const itemCategory = item.getAttribute('data-category');
+        
+        if (category === 'all' || itemCategory === category) {
+            item.style.display = 'block';
+            item.style.animation = 'fadeIn 0.4s ease';
+        } else {
+            item.style.display = 'none';
+        }
+    });
 }
 
-// === ОБРАБОТЧИКИ ФИЛЬТРОВ ===
-document.querySelectorAll('.category-filter').forEach(btn => {
+document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
         btn.classList.add('active');
-        filterMenu(btn.dataset.category);
+        
+        const category = btn.getAttribute('data-category');
+        filterMenu(category);
     });
 });
 
-// === СТАТУС ПОЛЬЗОВАТЕЛЯ ===
 function checkUserStatus() {
     const user = JSON.parse(localStorage.getItem('user-data') || 'null');
     const token = localStorage.getItem('user-token');
@@ -105,7 +90,6 @@ function checkUserStatus() {
     }
 }
 
-// === ИНИЦИАЛИЗАЦИЯ ===
 document.addEventListener('DOMContentLoaded', () => {
     loadMenu();
     checkUserStatus();

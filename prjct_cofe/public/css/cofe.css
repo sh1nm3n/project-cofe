@@ -653,3 +653,28 @@ footer p {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
+
+@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+
+        .menu-item {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }

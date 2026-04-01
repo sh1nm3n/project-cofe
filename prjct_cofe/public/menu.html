@@ -4,46 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Меню | Капучинка</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cofe.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
-<body class="dark-bg">
+<body>
     <header>
-        <nav class="container">
-            <a href="index.html" class="logo">B<span>&</span>B</a>
-            <ul class="nav-links">
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="menu.html" class="active">Меню</a></li>
-                <li><a href="contact.html">Контакты</a></li>
-                <li><span id="userStatus" style="margin-left: 1rem; color: var(--accent); font-weight: 600;"></span></li>
-                <li><a href="auth.html" id="authLink">Войти</a></li>
-            </ul>
-        </nav>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Капу<span>ч</span>инка</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="menu.html" class="active">Меню</a></li>
+                    <li><a href="contact.html">Контакты</a></li>
+                    <span id="userStatus" style="margin-left: 1rem; color: #8B4513; font-weight: 600;"></span>
+                    <li><a href="auth.html" id="authLink">Войти</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <main class="container page-content">
-        <div class="text-center-block">
-            <span class="subtitle">Наши предложения</span>
-            <h2 class="section-title">Карта вкусов</h2>
-        </div>
+    <section class="menu-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="subtitle">Наши предложения</span>
+                <h2 class="section-title">Карта вкусов</h2>
+            </div>
 
-        <div style="text-align: center; margin-bottom: 40px;">
-                <button class="btn-premium category-filter active" data-category="all">Все</button>
-                <button class="btn-premium category-filter" data-category="Классика и Авторские напитки">Классика</button>
-                <button class="btn-premium category-filter" data-category="Десерты">Десерты</button>
-                <button class="btn-premium category-filter" data-category="Холодные напитки">Холодные</button>
-                <button class="btn-premium category-filter" data-category="Чай и Альтернатива">Чай</button>
-        </div>
+            <div class="menu-tabs">
+                <button class="tab-btn active" data-category="all">Все</button>
+                <button class="tab-btn" data-category="Классика и Авторские напитки">Классика</button>
+                <button class="tab-btn" data-category="Десерты">Десерты</button>
+                <button class="tab-btn" data-category="Холодные напитки">Холодные</button>
+                <button class="tab-btn" data-category="Чай и Альтернатива">Чай</button>
+            </div>
 
-        <div id="menuContainer" class="menu-premium-grid">
-                <p style="text-align: center; color: var(--text-muted);">Загрузка меню...</p>
+            <div id="menuContainer" class="menu-grid">
+                <p style="text-align: center; color: var(--text-soft); padding: 60px 0;">Загрузка меню...</p>
+            </div>
         </div>
-        
-        
-    </main>
+    </section>
 
+    <footer>
+        <div class="container">
+            <p>© 2026 Капучинка. Specialty Coffee House</p>
+        </div>
+    </footer>
     <script src="../cofe_backend/js/filter.js"></script>
+
 </body>
 </html>
