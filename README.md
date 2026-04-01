@@ -9,5 +9,5 @@
 
 ## 🛠 Стек технологий
 
-- **Frontend:** React, HTML, CSS, JavaScript
+- **Frontend:** HTML, CSS, JavaScript
 - **Backend:** Node.js, MySQL
